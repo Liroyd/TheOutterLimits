@@ -14,22 +14,19 @@ public class TapToMove : MonoBehaviour {
 
 
     void UpdateTouch() {
-        Vector3 v3;
-
         if (Input.touchCount != 1) {
             dragging = false;
             return;
         }
 
+        Vector3 v3;
         Touch touch = Input.touches[0];
-        Vector3 pos = touch.position;
 
         if (touch.phase == TouchPhase.Began) {
             RaycastHit hit;
+            Vector3 pos = touch.position;
             Ray ray = Camera.main.ScreenPointToRay(pos);
-            if (Physics.Raycast(ray, out hit))
-            {
-                Debug.Log("Here");
+            if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Draggable")) {
                 toDrag = hit.transform;
                 dist = hit.transform.position.z - Camera.main.transform.position.z;
                 v3 = new Vector3(pos.x, pos.y, dist);
@@ -50,12 +47,10 @@ public class TapToMove : MonoBehaviour {
 
     void UpdateMouse() {
         Vector3 v3;
-
         if (Input.GetMouseButtonDown(0)) {
             RaycastHit  hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit))
-            {
+            if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Draggable")) {
                 toDrag = hit.transform;
                 dist = hit.transform.position.z - Camera.main.transform.position.z;
                 v3 = new Vector3(Input.mousePosition.x, Input.mousePosition.y, dist);
