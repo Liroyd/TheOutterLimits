@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class TapToMove : MonoBehaviour {
     private float dist;
@@ -8,69 +7,69 @@ public class TapToMove : MonoBehaviour {
     private Transform toDrag;
 
     void Update() {
-        UpdateMouse();
-        //UpdateTouch();
-        //TODO: add logic based on editor
+        #if UNITY_EDITOR
+            UpdateMouse();
+        #else
+            UpdateTouch();
+        #endif
     }
-
 
     void UpdateTouch() {
         if (Input.touchCount != 1) {
             dragging = false;
             return;
         }
-
-        Vector3 v3;
         Touch touch = Input.touches[0];
 
         if (touch.phase == TouchPhase.Began) {
-            RaycastHit hit;
-            Vector3 pos = touch.position;
-            Ray ray = Camera.main.ScreenPointToRay(pos);
-            if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Draggable")) {
-                toDrag = hit.transform;
-                dist = hit.transform.position.z - Camera.main.transform.position.z;
-                v3 = new Vector3(pos.x, pos.y, dist);
-                v3 = Camera.main.ScreenToWorldPoint(v3);
-                offset = toDrag.position - v3;
-                dragging = true;
-            }
+            onTouchBegin(touch.position);
         }
         if (dragging && touch.phase == TouchPhase.Moved) {
-            v3 = new Vector3(Input.mousePosition.x, Input.mousePosition.y, dist);
-            v3 = Camera.main.ScreenToWorldPoint(v3);
-            toDrag.position = v3 + offset;
+            Vector3 touchPosition = new Vector3(touch.position.x, touch.position.y, dist);
+            moveObject(touchPosition);
         }
         if (dragging && (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)) {
-            dragging = false;
+            onTouchEnd();
         }
     }
 
     void UpdateMouse() {
-        Vector3 v3;
         if (Input.GetMouseButtonDown(0)) {
-            RaycastHit  hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Draggable")) {
-                toDrag = hit.transform;
-                dist = hit.transform.position.z - Camera.main.transform.position.z;
-                v3 = new Vector3(Input.mousePosition.x, Input.mousePosition.y, dist);
-                v3 = Camera.main.ScreenToWorldPoint(v3);
-                offset = toDrag.position - v3;
-                dragging = true;
-            }
+            onTouchBegin(Input.mousePosition);
         }
-        if (Input.GetMouseButton(0) && dragging) {
-            v3 = new Vector3(Input.mousePosition.x, Input.mousePosition.y, dist);
-            v3 = Camera.main.ScreenToWorldPoint(v3);
-            toDrag.position = v3 + offset;
-            toDrag.position -= new Vector3(0, 0, toDrag.transform.position.z + 382f);
-            //TODO: refactor it : drag&drop
+        if (dragging && Input.GetMouseButton(0)) {
+            Vector3 touchPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, dist);
+            moveObject(touchPosition);
+
         }
-        if (Input.GetMouseButtonUp(0)) {
-            dragging = false;
-            test();
+        if (dragging && Input.GetMouseButtonUp(0)) {
+            onTouchEnd();
         }
+    }
+
+     private void onTouchBegin(Vector3 pos) {
+         RaycastHit hit;
+         Ray ray = Camera.main.ScreenPointToRay(pos);
+         if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Draggable")) {
+             toDrag = hit.transform;
+             dist = hit.transform.position.z - Camera.main.transform.position.z;
+             Vector3 v3 = new Vector3(pos.x, pos.y, dist);
+             v3 = Camera.main.ScreenToWorldPoint(v3);
+             offset = toDrag.position - v3;
+             dragging = true;
+         }
+     }
+
+    private void moveObject(Vector3 v3) {
+        v3 = Camera.main.ScreenToWorldPoint(v3);
+        toDrag.position = v3 + offset;
+        //TODO: refactor it : drag&drop
+        toDrag.position -= new Vector3(0, 0, toDrag.transform.position.z + 382f);
+    }
+
+    private void onTouchEnd() {
+        dragging = false;
+        test();
     }
 
     void test() {
