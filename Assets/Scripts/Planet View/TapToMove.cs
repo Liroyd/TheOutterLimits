@@ -10,6 +10,7 @@ public class TapToMove : MonoBehaviour {
     void Update() {
         UpdateMouse();
         //UpdateTouch();
+        //TODO: add logic based on editor
     }
 
 
@@ -63,9 +64,29 @@ public class TapToMove : MonoBehaviour {
             v3 = new Vector3(Input.mousePosition.x, Input.mousePosition.y, dist);
             v3 = Camera.main.ScreenToWorldPoint(v3);
             toDrag.position = v3 + offset;
+            toDrag.position -= new Vector3(0, 0, toDrag.transform.position.z + 382f);
+            //TODO: refactor it : drag&drop
         }
         if (Input.GetMouseButtonUp(0)) {
             dragging = false;
+            test();
         }
+    }
+
+    void test() {
+
+        RaycastHit  hitCurrentObject;
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out hitCurrentObject) && (hitCurrentObject.collider.tag == "Draggable")) {
+            RaycastHit  hitPlanetObject;
+            if (Physics.Raycast (ray, out hitPlanetObject, 10000f, 1 << 8)) {
+                hitCurrentObject.transform.position -= new Vector3 (0, 0, hitCurrentObject.transform.position.z
+                + hitPlanetObject.transform.position.z + hitPlanetObject.transform.position.magnitude + 350);
+                //TODO: refactor it : drag&drop
+            }
+        }
+
+
+
     }
 }
