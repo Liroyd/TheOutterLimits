@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 
 public class TapToMove : MonoBehaviour {
-    private float dist;
+
     private bool dragging = false;
-    private Vector3 offset;
     private Transform toDrag;
     private readonly float INITIAL_POZITION_Z = -450f;
     private readonly int LAYER_PLANET = 1 << 8;
@@ -27,11 +26,10 @@ public class TapToMove : MonoBehaviour {
             onTouchBegin(touch.position);
         }
         if (dragging && touch.phase == TouchPhase.Moved) {
-            Vector3 touchPosition = new Vector3(touch.position.x, touch.position.y, dist);
-            moveObject(touchPosition);
+            moveObject(touch.position);
         }
         if (dragging && (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)) {
-            onTouchEnd();
+            onTouchEnd(touch.position);
         }
     }
 
@@ -40,45 +38,41 @@ public class TapToMove : MonoBehaviour {
             onTouchBegin(Input.mousePosition);
         }
         if (dragging && Input.GetMouseButton(0)) {
-            Vector3 touchPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, dist);
-            moveObject(touchPosition);
+            moveObject(Input.mousePosition);
 
         }
         if (dragging && Input.GetMouseButtonUp(0)) {
-            onTouchEnd();
+            onTouchEnd(Input.mousePosition);
         }
     }
 
-    private void onTouchBegin(Vector3 pos) {
+    private void onTouchBegin(Vector3 touchPosition) {
         RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(pos);
+        Ray ray = Camera.main.ScreenPointToRay(touchPosition);
         if (Physics.Raycast(ray, out hit) && (hit.collider.tag == "Draggable")) {
             toDrag = hit.transform;
-            dist = INITIAL_POZITION_Z - Camera.main.transform.position.z;
-            Vector3 v3 = new Vector3(pos.x, pos.y, dist);
-            v3 = Camera.main.ScreenToWorldPoint(v3);
-            offset = new Vector3(toDrag.position.x, toDrag.position.y, INITIAL_POZITION_Z) - v3;
             dragging = true;
         }
     }
 
-    private void moveObject(Vector3 v3) {
-        v3 = Camera.main.ScreenToWorldPoint(v3);
-        toDrag.position = v3 + offset;
+    private void moveObject(Vector3 touchPosition) {
+        touchPosition = new Vector3(touchPosition.x, touchPosition.y, INITIAL_POZITION_Z - Camera.main.transform.position.z);
+        touchPosition = Camera.main.ScreenToWorldPoint(touchPosition);
+        toDrag.position = touchPosition;
     }
 
-    private void onTouchEnd() {
+    private void onTouchEnd(Vector3 touchPosition) {
         dragging = false;
-        dropObjectOnPlanet();
+        dropObjectOnPlanet(touchPosition);
     }
 
-    private void dropObjectOnPlanet() {
+    private void dropObjectOnPlanet(Vector3 touchPosition) {
         RaycastHit  hitCurrentObject;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(touchPosition);
         if (Physics.Raycast(ray, out hitCurrentObject) && (hitCurrentObject.collider.tag == "Draggable")) {
             RaycastHit  hitPlanetObject;
-            var screenPositionOfCurrentObject = Camera.main.WorldToScreenPoint(hitCurrentObject.transform.position);
-            ray = Camera.main.ScreenPointToRay(screenPositionOfCurrentObject);
+           // Vector3 screenPositionOfCurrentObject = Camera.main.WorldToScreenPoint(hitCurrentObject.transform.position);
+           // ray = Camera.main.ScreenPointToRay(screenPositionOfCurrentObject);
             if (Physics.Raycast(ray, out hitPlanetObject, 10000f, LAYER_PLANET)) {
                 hitCurrentObject.transform.position = hitPlanetObject.point;
             }
