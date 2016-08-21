@@ -98,6 +98,7 @@ GameObject:
   - 114: {fileID: 61848263}
   - 64: {fileID: 61848264}
   - 114: {fileID: 61848261}
+  - 114: {fileID: 61848267}
   m_Layer: 8
   m_Name: Sphere
   m_TagString: Untagged
@@ -209,6 +210,17 @@ MeshCollider:
   serializedVersion: 2
   m_Convex: 0
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &61848267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 61848258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 016d82ad04305e845b09f40cd4966ad3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &177242635
 GameObject:
   m_ObjectHideFlags: 0

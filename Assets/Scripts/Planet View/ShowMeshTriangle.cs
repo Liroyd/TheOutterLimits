@@ -3,6 +3,8 @@ using System.Net;
 
 public class ShowMeshTriangle : MonoBehaviour {
 
+    //public GameObject myObject;
+
     Material material;
 
     Vector3 p0;
@@ -45,24 +47,38 @@ public class ShowMeshTriangle : MonoBehaviour {
         p1 = hitTransform.TransformPoint(p1);
         p2 = hitTransform.TransformPoint(p2);
 
-        Debug.DrawLine(p0, p1, Color.blue, 2, false);
-        Debug.DrawLine(p1, p2, Color.blue, 2, false);
-        Debug.DrawLine(p2, p0, Color.blue, 2, false);
+       /* LineRenderer renderer = myObject.GetComponent<LineRenderer>();
+        renderer.SetPosition(0, p0);
+        renderer.SetPosition(1, p1);
+        renderer.SetPosition(2, p2);
+        renderer.SetPosition(3, p0);*/
+       Debug.DrawLine(p0, p1, Color.red, 2, false);
+       Debug.DrawLine(p1, p2, Color.red, 2, false);
+       Debug.DrawLine(p2, p0, Color.red, 2, false);
+
 	}
 
- /*   void OnPostRender() {
+   /* void OnPostRender() {
         if (!material) {
-            Debug.LogError("Please Assign a material on the inspector");
-            return;
+            var shader = Shader.Find("Hidden/Internal-Colored");
+            material = new Material(shader);
+            material.hideFlags = HideFlags.HideAndDontSave;
+            material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusDstColor);
+            material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
+
+            material.SetInt("_cull", (int)UnityEngine.Rendering.CullMode.Off);
+            material.SetInt("_ZWrite",0);
+            material.SetInt("_ZTest", (int)UnityEngine.Rendering.CompareFunction.Always);
         }
         GL.PushMatrix();
         material.SetPass(0);
         GL.Color(Color.red);
         GL.LoadOrtho();
-        GL.Begin(GL.TRIANGLES);
+        GL.Begin(GL.LINES);
         GL.Vertex(p0);
         GL.Vertex(p1);
         GL.Vertex(p2);
+        GL.Vertex(p0);
         GL.End();
         GL.PopMatrix();
     }*/
