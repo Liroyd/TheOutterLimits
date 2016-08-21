@@ -5,7 +5,7 @@ public class DrawMeshGrid : MonoBehaviour {
 
     int[] trianglesToDraw = {510, 511, 478, 477, 471, 472, 479, 446, 445, 444, 429, 428, 545, 544, 559, 558, 566, 567,
         574, 575, 638, 637, 635, 599, 598, 606, 607, 543, 542, 541, 540, 539, 538, 537, 536, 430, 435, 474, 475, 476,
-        415, 414, 72, 80, 67};
+        415, 414};
 
     // Use this for initialization
     void Start () {
@@ -43,6 +43,7 @@ public class DrawMeshGrid : MonoBehaviour {
 
     private LineRenderer createLineRenderer() {
         GameObject grid = new GameObject();
+        grid.transform.parent = this.transform;
         grid.name = "Grid";
         LineRenderer lineRenderer = grid.AddComponent<LineRenderer>();
         lineRenderer.SetWidth(1, 1);
