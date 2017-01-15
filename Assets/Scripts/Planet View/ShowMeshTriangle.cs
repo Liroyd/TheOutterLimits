@@ -18,7 +18,7 @@ public class ShowMeshTriangle : MonoBehaviour {
         touchPosition = Input.mousePosition;
         #else
         if (Input.touchCount != 1) {
-            clearTriangle();
+            clearTriangle(lineRenderer);
             return;
         }
         touchPosition =  Input.touches[0].position;
