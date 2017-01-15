@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class TapToMove : MonoBehaviour {
+public class MoveDraggableObject : MonoBehaviour {
 
     private bool dragging = false;
     private Transform toDrag;
