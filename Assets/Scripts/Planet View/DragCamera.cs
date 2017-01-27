@@ -92,8 +92,8 @@ public class DragCamera : MonoBehaviour {
         transform.position = targetPosition;
     }
 
-    private void calculateMagnitudeOfSlide(Vector3 deltaCameraPoisiton) { // TODO make it based on width/height of screen
-        deltaMagnitudeOfSlide = (deltaCameraPoisiton / Time.deltaTime).magnitude; // speed of swipe
+    private void calculateMagnitudeOfSlide(Vector3 deltaCameraPosition) { // TODO make it based on width/height of screen
+        deltaMagnitudeOfSlide = (deltaCameraPosition / Time.deltaTime).magnitude; // speed of swipe
         isMoveCameraAfterFastSlide = deltaMagnitudeOfSlide > 1000f;
     }
 
