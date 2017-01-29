@@ -793,6 +793,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf6a4244e2ab6e540ad44c7ffdcd75f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  panSpeed: 1000
+  cameraMovementLimit: 500
 --- !u!1 &1896562937
 GameObject:
   m_ObjectHideFlags: 0

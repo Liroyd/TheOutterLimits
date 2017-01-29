@@ -7,7 +7,7 @@ public class DragCamera : MonoBehaviour {
 
     private Vector3 initialCameraPosition;
     private Vector3 initialTouchPosition;
-    private float panSpeed = 1000f;
+    public float panSpeed = 1000f;
 
     private Vector3 deltaCameraPosition;
     private float deltaMagnitudeOfSlide;
@@ -15,6 +15,19 @@ public class DragCamera : MonoBehaviour {
 
     private float slideForwardSpeedReduce = 1f;
     private float slideBackwardSpeedReduce = 5f;
+
+    public float cameraMovementLimit = 500f;
+    private Vector3 minCameraPosition;
+    private Vector3 maxCameraPosition;
+
+    void Start() {
+        calculateLimitCameraPosition();
+    }
+
+    private void calculateLimitCameraPosition() {
+        minCameraPosition = new Vector3(transform.position.x - cameraMovementLimit, transform.position.y - cameraMovementLimit, transform.position.z);
+        maxCameraPosition = new Vector3(transform.position.x + cameraMovementLimit, transform.position.y + cameraMovementLimit, transform.position.z);
+    }
 
 
     void Update() {
@@ -80,30 +93,39 @@ public class DragCamera : MonoBehaviour {
     }
 
     private void moveCamera(Vector3 touchPosition) {
-        var currentTouchPosition = Camera.main.ScreenToViewportPoint(touchPosition);
+        Vector3 currentTouchPosition = Camera.main.ScreenToViewportPoint(touchPosition);
         Vector3 deltaTouchPosition = initialTouchPosition - currentTouchPosition; //Get the difference between where the touches
 
-        var targetPosition = initialCameraPosition + deltaTouchPosition * panSpeed;
+        Vector3 targetPosition = initialCameraPosition + deltaTouchPosition * panSpeed;
+        targetPosition = getCameraPositionBasedOnLimit(targetPosition);
 
         // is needed for moveCameraAfterFastSlide
         deltaCameraPosition = transform.position - targetPosition;
-        calculateMagnitudeOfSlide(deltaCameraPosition);
-        //Move the position of the camera to simulate a drag, panSpeed for screen to worldspace conversion
+        calculateMagnitudeOfSlide();
+
         transform.position = targetPosition;
     }
 
-    private void calculateMagnitudeOfSlide(Vector3 deltaCameraPosition) { // TODO make it based on width/height of screen
+    private void calculateMagnitudeOfSlide() {
         deltaMagnitudeOfSlide = (deltaCameraPosition / Time.deltaTime).magnitude; // speed of swipe
         isMoveCameraAfterFastSlide = deltaMagnitudeOfSlide > 1000f;
+    }
+
+    private Vector3 getCameraPositionBasedOnLimit(Vector3 targetPosition) {
+        float x = Mathf.Clamp(targetPosition.x, minCameraPosition.x, maxCameraPosition.x);
+        float y = Mathf.Clamp(targetPosition.y, minCameraPosition.y, maxCameraPosition.y);
+        return new Vector3(x, y, targetPosition.z);
     }
 
     private void moveCameraAfterFastSlide() {
         if (counter == 0) {
             calculateSpeedForEndOfSliding();
         } else if (counter < 7) {
-            transform.position -= deltaCameraPosition / slideForwardSpeedReduce; // move camera in slide direction
+            Vector3 targetPosition = transform.position - deltaCameraPosition / slideForwardSpeedReduce;
+            transform.position = getCameraPositionBasedOnLimit(targetPosition); // move camera in slide direction
         } else if (counter < 10) {
-            transform.position += deltaCameraPosition / slideBackwardSpeedReduce; // move camera backward for drama effect
+            Vector3 targetPosition = transform.position + deltaCameraPosition / slideForwardSpeedReduce;
+            //transform.position = getCameraPositionBasedOnLimit(targetPosition); // move camera backward for drama effect //TODO move came back
         } else {
             counter = 0;
             isMoveCameraAfterFastSlide = false;
@@ -122,7 +144,7 @@ public class DragCamera : MonoBehaviour {
         } else if (deltaMagnitudeOfSlide < 8000f) {
             slideForwardSpeedReduce = 3f;
             slideBackwardSpeedReduce = 7f;
-        } else if (deltaMagnitudeOfSlide < 10000f) { // TODO make it based on width/height of screen
+        } else if (deltaMagnitudeOfSlide < 10000f) {
             slideForwardSpeedReduce = 2f;
             slideBackwardSpeedReduce = 6f;
         } else {
@@ -136,5 +158,4 @@ public class DragCamera : MonoBehaviour {
         Ray ray = Camera.main.ScreenPointToRay(touchPosition);
         return Physics.Raycast(ray, out hit) && (hit.collider.tag == "Draggable");
     }
-    //TODO: add frames of available slide area
 }
