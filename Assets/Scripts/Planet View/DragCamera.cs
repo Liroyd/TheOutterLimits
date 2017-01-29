@@ -124,8 +124,8 @@ public class DragCamera : MonoBehaviour {
             Vector3 targetPosition = transform.position - deltaCameraPosition / slideForwardSpeedReduce;
             transform.position = getCameraPositionBasedOnLimit(targetPosition); // move camera in slide direction
         } else if (counter < 10) {
-            Vector3 targetPosition = transform.position + deltaCameraPosition / slideForwardSpeedReduce;
-            //transform.position = getCameraPositionBasedOnLimit(targetPosition); // move camera backward for drama effect //TODO move came back
+            Vector3 targetPosition = transform.position + deltaCameraPosition / slideBackwardSpeedReduce;
+            transform.position = getCameraPositionBasedOnLimit(targetPosition); // move camera backward for drama effect
         } else {
             counter = 0;
             isMoveCameraAfterFastSlide = false;
