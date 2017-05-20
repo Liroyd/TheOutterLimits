@@ -56,12 +56,15 @@ public class ShowMeshTriangle : MonoBehaviour {
         triangle.transform.parent = this.transform;
         triangle.name = "Triangle";
         LineRenderer lineRenderer = triangle.AddComponent<LineRenderer>();
-        lineRenderer.SetWidth(3, 3);
+        lineRenderer.startWidth = 3;
+        lineRenderer.endWidth = 3;
         Material material = new Material(Shader.Find("Sprites/Default"));
         lineRenderer.material = material;
 
-        lineRenderer.SetColors(Color.red, Color.red);
-        lineRenderer.SetVertexCount(4);
+        lineRenderer.startColor = Color.red;
+        lineRenderer.endColor = Color.red;
+
+        lineRenderer.positionCount = 4;
         clearTriangle(lineRenderer);
         return lineRenderer;
     }

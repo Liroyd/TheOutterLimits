@@ -1,4 +1,6 @@
-﻿Shader "CubeMap Texture" {
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "CubeMap Texture" {
     Properties {
         _CubeMap ("Cube Map", Cube) = "white" {}
     }
@@ -19,7 +21,7 @@
 
             v2f vert (appdata_img v) {
                 v2f o;
-                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = v.vertex.xyz ;//* half3(1,1,1); // mirror so cubemap projects as expected
                 return o;
             }

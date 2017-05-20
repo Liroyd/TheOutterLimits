@@ -46,12 +46,14 @@ public class DrawMeshGrid : MonoBehaviour {
         grid.transform.parent = this.transform;
         grid.name = "Grid";
         LineRenderer lineRenderer = grid.AddComponent<LineRenderer>();
-        lineRenderer.SetWidth(1, 1);
+        lineRenderer.startWidth = 1;
+        lineRenderer.endWidth = 1;
         Material material = new Material(Shader.Find("Sprites/Default"));
         lineRenderer.material = material;
 
-        lineRenderer.SetColors(Color.green, Color.green);
-        lineRenderer.SetVertexCount(trianglesToDraw.Length * 4);
+        lineRenderer.startColor = Color.green;
+        lineRenderer.endColor = Color.green;
+        lineRenderer.positionCount = trianglesToDraw.Length * 4;
         return lineRenderer;
     }
 }
